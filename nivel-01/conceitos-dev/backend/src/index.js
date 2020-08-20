@@ -1,6 +1,9 @@
 const express = require('express');
+const cors = require('cors');
+const faker = require('faker');
 const { uuid, isUuid } = require('uuidv4');
 const app = express();
+app.use(cors());
 
 /**
  * Middleware:
@@ -54,8 +57,8 @@ app.post('/projects', (request, response) => {
 
   const project = {
     "id": uuid(),
-    "title": title,
-    "owner": owner
+    "title": faker.name.title(),
+    "owner": faker.name.findName(),
   };
 
   projects.push(project)
