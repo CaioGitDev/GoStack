@@ -1,5 +1,5 @@
-import React, {useEffect, useState} from 'react'
-import { View, Text, StyleSheet, StatusBar } from 'react-native'
+import React, { useEffect, useState } from 'react'
+import { SafeAreaView,FlatList, Text, StyleSheet, StatusBar, TouchableOpacity } from 'react-native'
 import api from './services/api'
 
 // não possuem valor semântico
@@ -12,35 +12,77 @@ export default function App() {
   const [projects, setProjects] = useState([]);
 
   useEffect(() => {
-    console.log('response.data');
-    api.get('projects').then(response => {
-      console.log(response.data);
+    api.get('/projects').then(response => {
       setProjects(response.data);
     }).catch(error => {
       console.log(error);
     });
   }, []);
+  async function handleAddProject() {
+    const response = await api.post('/projects', {
+      title: 'faker_title',
+      owner: 'faker_owner'
+    });
+    setProjects([...projects, response.data]);
+  }
 
   return (
     <>
-      <StatusBar barStyle="light-content" backgroundColor="#7159c1"/>
-      <View style={styles.container}>
+      <StatusBar barStyle="light-content" backgroundColor="#7159c1" />
+      <SafeAreaView style={styles.container}>
+      <FlatList 
+        data={projects}
+        keyExtractor= {project => project.id}
+        renderItem={
+          ({ item: project }) => (<Text style={styles.project}>{project.title}</Text>)
+        }
+      />
+      <TouchableOpacity 
+        activeOpacity={0.6} 
+        style={styles.button} 
+        onPress={handleAddProject}
+      >
+        <Text style={styles.buttonText}>Adicionar projeto</Text>
+      </TouchableOpacity>
+      </SafeAreaView>
+     
+      {/* <View style={styles.container}>
         <Text style={styles.title}>Olá Mundo!</Text>
-      </View>
+        {projects.map(project => (
+        <Text key={project.id} style={styles.project}>{project.title}</Text>
+        ))}
+      </View> */}
     </>
-    )
+  )
 }
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: '#7159c1',
-    justifyContent: 'center',
-    alignItems: 'center',
+
   },
   title: {
     color: '#FFF',
     fontSize: 32,
     fontWeight: 'bold'
+  },
+  project: {
+    color: '#fff',
+    fontSize: 20,
+  },
+  button: {
+    alignSelf: 'stretch',
+    backgroundColor: '#fff',
+    margin: 20,
+    height: 50,
+    borderRadius: 4,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  buttonText: {
+    fontWeight: 'bold',
+    fontSize: 16,
+
   }
 })
