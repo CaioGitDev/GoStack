@@ -13,10 +13,12 @@
     "@types/react-dom": "^16.9.0",
     "date-fns": "^2.15.0",
     "express": "^4.17.1",
+    "pg": "^8.3.3",
     "react": "^16.13.1",
     "react-dom": "^16.13.1",
     "react-scripts": "3.4.3",
     "ts-node-dev": "^1.0.0-pre.61",
+    "typeorm": "^0.2.25",
     "typescript": "~3.7.2",
     "uuidv4": "^6.2.3"
   },
