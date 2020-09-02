@@ -17,6 +17,7 @@
     "react": "^16.13.1",
     "react-dom": "^16.13.1",
     "react-scripts": "3.4.3",
+    "reflect-metadata": "^0.1.13",
     "ts-node-dev": "^1.0.0-pre.61",
     "typeorm": "^0.2.25",
     "typescript": "~3.7.2",
