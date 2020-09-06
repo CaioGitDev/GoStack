@@ -2,6 +2,7 @@ import { startOfHour } from 'date-fns';
 import { getCustomRepository } from 'typeorm';
 import Appointment from '../models/Appointments';
 import AppointmentRespository from '../repositories/AppointmentsRespository';
+import AppError from '../errors/AppError';
 
 interface RequestDTO {
   provider_id: string;
@@ -22,7 +23,7 @@ class CreateAppointmentService {
     );
 
     if (findAppointmentInSameDate) {
-      throw Error('this appointment is already booked');
+      throw new AppError('this appointment is already booked', 400);
     }
 
     // cria uma instancia do obj que será salvo
