@@ -1,38 +1,79 @@
-import React, { useState } from 'react';
+import React, { useState, FormEvent } from 'react';
 import { FiChevronRight } from 'react-icons/fi';
 
-import { StyledTitle, StyledForm, StyledRepositories } from './styles';
+import {
+  StyledTitle,
+  StyledForm,
+  StyledRepositories,
+  StyledError,
+} from './styles';
 import logoImg from '../../assets/logo.svg';
 import api from '../../services/api';
 
+interface Repository {
+  full_name: string;
+  description: string;
+  owner: {
+    login: string;
+    avatar_url: string;
+  };
+}
+
 const Dashboard: React.FC = () => {
-  // const [repositories, setRepositories] = useState();
+  const [newRepo, setNewRepo] = useState('');
+  const [inputError, setInputError] = useState('');
+  const [repositories, setRepositories] = useState<Repository[]>([]);
 
-  // function handleAddRepository() {
+  async function handleAddRepository(
+    event: FormEvent<HTMLFormElement>,
+  ): Promise<void> {
+    event.preventDefault();
 
-  // }
+    if (!newRepo) {
+      setInputError('Digite o autor/nome do repositório');
+      return;
+    }
+
+    try {
+      const response = await api.get<Repository>(`repos/${newRepo}`);
+      const repository = response.data;
+      setRepositories([...repositories, repository]);
+      setNewRepo('');
+      setInputError('');
+    } catch (error) {
+      setInputError('Repositório não encontrado!');
+    }
+  }
 
   return (
     <>
       <img src={logoImg} alt="Github Explorer" />
       <StyledTitle>Explore repositórios no Github</StyledTitle>
-      <StyledForm>
-        <input placeholder="Digite o nome do repositório" />
+      <StyledForm onSubmit={handleAddRepository}>
+        <input
+          placeholder="Digite o nome do repositório"
+          value={newRepo}
+          onChange={e => setNewRepo(e.target.value)}
+        />
         <button>Pesquisar</button>
       </StyledForm>
 
+      {inputError && <StyledError>{inputError}</StyledError>}
+
       <StyledRepositories>
-        <a href="test">
-          <img
-            src="https://avatars1.githubusercontent.com/u/53819717?s=460&u=287971358ea3307a32f7a6769ead871996ec33cb&v=4"
-            alt="Caio Rosa"
-          ></img>
-          <div>
-            <strong>CaioRosa/discord-interface</strong>
-            <p>Easy peasy highly scalable ReactJS</p>
-          </div>
-          <FiChevronRight size={20} />
-        </a>
+        {repositories.map(repository => (
+          <a key={repository.full_name} href="test">
+            <img
+              src={repository.owner.avatar_url}
+              alt={repository.owner.login}
+            ></img>
+            <div>
+              <strong>{repository.full_name}</strong>
+              <p>{repository.description}</p>
+            </div>
+            <FiChevronRight size={20} />
+          </a>
+        ))}
       </StyledRepositories>
     </>
   );
